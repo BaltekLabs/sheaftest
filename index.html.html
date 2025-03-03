@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sheaf Automotive Vehicle Inspection</title>
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #2c5282;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subheading {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #444;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        @media (min-width: 768px) {
+            .checkbox-group {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-item input {
+            margin-right: 10px;
+        }
+
+        h3 {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 18px;
+        }
+
+        .file-upload {
+            display: flex;
+            align-items: center;
+            margin-top: 5px;
+        }
+
+        .file-upload-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 15px;
+            background-color: #f0f0f0;
+            border: 2px dashed #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .file-upload-btn:hover {
+            background-color: #e8e8e8;
+        }
+
+        .file-upload-btn svg {
+            margin-right: 8px;
+        }
+
+        .file-info {
+            margin-left: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+
+        .btn-reset {
+            background-color: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-reset:hover {
+            background-color: #cbd5e0;
+        }
+
+        .btn-submit {
+            background-color: #2b6cb0;
+            color: white;
+        }
+
+        .btn-submit:hover {
+            background-color: #2c5282;
+        }
+
+        .success-message {
+            text-align: center;
+            padding: 40px 20px;
+            background-color: #f0fff4;
+            border-radius: 8px;
+        }
+
+        .success-title {
+            color: #2f855a;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .success-details {
+            margin: 20px 0;
+            font-weight: 500;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AquaFleet Pre-Service Vehicle Inspection</h1>
+            <p class="subheading">Complete this form before bringing your vehicle in for service</p>
+        </header>
+
+        <div id="success-container" class="success-message hidden">
+            <h2 class="success-title">Inspection Report Submitted!</h2>
+            <p>Your vehicle information has been sent to our service team. We'll review your details before your appointment.</p>
+            <div class="success-details">
+                <p id="success-vehicle-id"></p>
+                <p id="success-vehicle-info"></p>
+                <p id="success-mileage"></p>
+            </div>
+            <button id="new-submission-btn" class="btn btn-submit">Submit Another Vehicle</button>
+        </div>
+
+        <form id="inspection-form">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="vehicleId">Vehicle ID/Fleet #</label>
+                    <input type="text" id="vehicleId" name="vehicleId" placeholder="e.g. 390" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="driverName">Driver Name</label>
+                    <input type="text" id="driverName" name="driverName" placeholder="Full Name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="make">Make</label>
+                    <input type="text" id="make" name="make" placeholder="e.g. Chevrolet" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="model">Model</label>
+                    <input type="text" id="model" name="model" placeholder="e.g. Silverado 2500" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="year">Year</label>
+                    <input type="number" id="year" name="year" placeholder="e.g. 2019" min="1900" max="2030" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="mileage">Current Mileage</label>
+                    <input type="number" id="mileage" name="mileage" placeholder="e.g. 74,961" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="oilChangeDue">Oil Change Due (mileage)</label>
+                    <input type="number" id="oilChangeDue" name="oilChangeDue" placeholder="e.g. 78,000">
+                </div>
+
+                <div class="form-group full-width">
+                    <h3>Issues to Address</h3>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="vehiclePulling" name="vehiclePulling">
+                            <label for="vehiclePulling">Vehicle Pulling</label>
+                        </div>
+
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="warningLights" name="warningLights">
+                            <label for="warningLights">Warning Lights On</label>
+                        </div>
+
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="windshieldWipers" name="windshieldWipers">
+                            <label for="windshieldWipers">Windshield Wipers</label>
+                        </div>
+
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="brakes" name="brakes">
+                            <label for="brakes">Brakes</label>
+                        </div>
+
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="tires" name="tires">
+                            <label for="tires">Tires</label>
+                        </div>
+
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="fluids" name="fluids">
+                            <label for="fluids">Fluids</label>
+                        </div>
+
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="other" name="other">
+                            <label for="other">Other</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="issueDetails">Issue Details</label>
+                    <textarea id="issueDetails" name="issueDetails" placeholder="Please describe any issues in detail"></textarea>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Upload Photos (optional)</label>
+                    <div class="file-upload">
+                        <label for="photos" class="file-upload-btn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                <circle cx="12" cy="13" r="4"></circle>
+                            </svg>
+                            Add Photos
+                        </label>
+                        <input type="file" id="photos" name="photos" multiple accept="image/*" style="display: none;">
+                        <span id="file-info" class="file-info">No photos selected</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="button" id="reset-btn" class="btn btn-reset">Reset Form</button>
+                <button type="submit" class="btn btn-submit">Submit Inspection</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // File upload handling
+        document.getElementById('photos').addEventListener('change', function(e) {
+            const fileCount = e.target.files.length;
+            const fileInfo = document.getElementById('file-info');
+            
+            if (fileCount > 0) {
+                fileInfo.textContent = `${fileCount} photo${fileCount > 1 ? 's' : ''} selected`;
+            } else {
+                fileInfo.textContent = 'No photos selected';
+            }
+        });
+
+        // Form submission
+        document.getElementById('inspection-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                vehicleId: document.getElementById('vehicleId').value,
+                driverName: document.getElementById('driverName').value,
+                make: document.getElementById('make').value,
+                model: document.getElementById('model').value,
+                year: document.getElementById('year').value,
+                mileage: document.getElementById('mileage').value,
+                oilChangeDue: document.getElementById('oilChangeDue').value,
+                vehiclePulling: document.getElementById('vehiclePulling').checked,
+                warningLights: document.getElementById('warningLights').checked,
+                windshieldWipers: document.getElementById('windshieldWipers').checked,
+                brakes: document.getElementById('brakes').checked,
+                tires: document.getElementById('tires').checked,
+                fluids: document.getElementById('fluids').checked,
+                other: document.getElementById('other').checked,
+                issueDetails: document.getElementById('issueDetails').value,
+                photos: document.getElementById('photos').files
+            };
+            
+            console.log('Form submitted:', formData);
+            
+            // Update success message
+            document.getElementById('success-vehicle-id').textContent = `Vehicle ID: ${formData.vehicleId}`;
+            document.getElementById('success-vehicle-info').textContent = `${formData.year} ${formData.make} ${formData.model}`;
+            document.getElementById('success-mileage').textContent = `Current Mileage: ${formData.mileage}`;
+            
+            // Show success message, hide form
+            document.getElementById('inspection-form').classList.add('hidden');
+            document.getElementById('success-container').classList.remove('hidden');
+        });
+
+        // Reset form
+        document.getElementById('reset-btn').addEventListener('click', function() {
+            document.getElementById('inspection-form').reset();
+            document.getElementById('file-info').textContent = 'No photos selected';
+        });
+
+        // New submission button
+        document.getElementById('new-submission-btn').addEventListener('click', function() {
+            document.getElementById('inspection-form').reset();
+            document.getElementById('file-info').textContent = 'No photos selected';
+            document.getElementById('success-container').classList.add('hidden');
+            document.getElementById('inspection-form').classList.remove('hidden');
+        });
+    </script>
+</body>
+</html>
