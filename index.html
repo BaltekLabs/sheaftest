@@ -21,7 +21,7 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 800px;
             margin: 0 auto;
             background-color: white;
             border-radius: 8px;
@@ -74,8 +74,7 @@
         }
 
         input[type="text"],
-        input[type="number"],
-        textarea {
+        input[type="number"] {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
@@ -83,68 +82,77 @@
             font-size: 14px;
         }
 
-        textarea {
-            min-height: 100px;
-            resize: vertical;
+        .photo-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
         }
 
-        .checkbox-group {
+        .photo-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 15px;
         }
 
         @media (min-width: 768px) {
-            .checkbox-group {
-                grid-template-columns: 1fr 1fr 1fr;
+            .photo-grid {
+                grid-template-columns: 1fr 1fr;
             }
         }
 
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
+        .photo-item {
+            border: 2px dashed #ccc;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            position: relative;
         }
 
-        .checkbox-item input {
-            margin-right: 10px;
-        }
-
-        h3 {
-            margin-bottom: 15px;
-            color: #333;
-            font-size: 18px;
+        .photo-preview {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: none;
+            border-radius: 4px;
+            margin-top: 10px;
         }
 
         .file-upload {
-            display: flex;
-            align-items: center;
-            margin-top: 5px;
+            position: relative;
+            overflow: hidden;
+            margin: 10px 0;
         }
 
-        .file-upload-btn {
-            display: inline-flex;
-            align-items: center;
-            padding: 8px 15px;
-            background-color: #f0f0f0;
-            border: 2px dashed #ccc;
+        .file-upload input {
+            position: absolute;
+            font-size: 100px;
+            opacity: 0;
+            right: 0;
+            top: 0;
+            cursor: pointer;
+        }
+
+        .upload-btn {
+            display: inline-block;
+            padding: 8px 20px;
+            background-color: #e2e8f0;
             border-radius: 4px;
+            font-weight: bold;
+            color: #4a5568;
             cursor: pointer;
             transition: background-color 0.2s;
         }
 
-        .file-upload-btn:hover {
-            background-color: #e8e8e8;
+        .upload-btn:hover {
+            background-color: #cbd5e0;
         }
 
-        .file-upload-btn svg {
-            margin-right: 8px;
-        }
-
-        .file-info {
-            margin-left: 10px;
-            font-size: 14px;
-            color: #666;
+        .photo-label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
         }
 
         .button-group {
@@ -208,7 +216,7 @@
 <body>
     <div class="container">
         <header>
-            <h1>Sheaf Automotive <br></br> Pre-Service Vehicle Inspection</h1>
+            <h1>Sheaf Automotive <br> Pre-Service Vehicle Inspection</h1>
             <p class="subheading">Complete this form before bringing your vehicle in for service</p>
         </header>
 
@@ -217,8 +225,9 @@
             <p>Your vehicle information has been sent to our service team. We'll review your details before your appointment.</p>
             <div class="success-details">
                 <p id="success-vehicle-id"></p>
-                <p id="success-vehicle-info"></p>
+                <p id="success-driver-name"></p>
                 <p id="success-mileage"></p>
+                <p id="success-notes"></p>
             </div>
             <button id="new-submission-btn" class="btn btn-submit">Submit Another Vehicle</button>
         </div>
@@ -236,87 +245,69 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="make">Make</label>
-                    <input type="text" id="make" name="make" placeholder="e.g. Chevrolet" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="model">Model</label>
-                    <input type="text" id="model" name="model" placeholder="e.g. Silverado 2500" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="year">Year</label>
-                    <input type="number" id="year" name="year" placeholder="e.g. 2019" min="1900" max="2030" required>
-                </div>
-
-                <div class="form-group">
                     <label for="mileage">Current Mileage</label>
                     <input type="number" id="mileage" name="mileage" placeholder="e.g. 74,961" required>
                 </div>
 
                 <div class="form-group">
                     <label for="oilChangeDue">Oil Change Due (mileage)</label>
-                    <input type="number" id="oilChangeDue" name="oilChangeDue" placeholder="e.g. 78,000">
+                    <input type="number" id="oilChangeDue" name="oilChangeDue" placeholder="e.g. 78,000" required>
                 </div>
 
                 <div class="form-group full-width">
-                    <h3>Issues to Address</h3>
-                    <div class="checkbox-group">
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="vehiclePulling" name="vehiclePulling">
-                            <label for="vehiclePulling">Vehicle Pulling</label>
-                        </div>
+                    <label for="notes">Additional Notes</label>
+                    <textarea id="notes" name="notes" placeholder="Enter any additional information about the vehicle condition or service needs" rows="4" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; resize: vertical;"></textarea>
+                </div>
+            </div>
 
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="warningLights" name="warningLights">
-                            <label for="warningLights">Warning Lights On</label>
-                        </div>
-
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="windshieldWipers" name="windshieldWipers">
-                            <label for="windshieldWipers">Windshield Wipers</label>
-                        </div>
-
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="brakes" name="brakes">
-                            <label for="brakes">Brakes</label>
-                        </div>
-
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="tires" name="tires">
-                            <label for="tires">Tires</label>
-                        </div>
-
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="fluids" name="fluids">
-                            <label for="fluids">Fluids</label>
-                        </div>
-
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="other" name="other">
-                            <label for="other">Other</label>
+            <div class="photo-section full-width">
+                <h3>Vehicle Photos</h3>
+                <p>Please take clear photos of each corner of the vehicle and the dashboard with the engine running</p>
+                
+                <div class="photo-grid">
+                    <div class="photo-item">
+                        <span class="photo-label">Front Left Corner</span>
+                        <img id="preview-front-left" class="photo-preview">
+                        <div class="file-upload">
+                            <button type="button" class="upload-btn">Take Photo</button>
+                            <input type="file" id="photo-front-left" name="photo-front-left" accept="image/*" capture="environment">
                         </div>
                     </div>
-                </div>
-
-                <div class="form-group full-width">
-                    <label for="issueDetails">Issue Details</label>
-                    <textarea id="issueDetails" name="issueDetails" placeholder="Please describe any issues in detail"></textarea>
-                </div>
-
-                <div class="form-group full-width">
-                    <label>Upload Photos (optional)</label>
-                    <div class="file-upload">
-                        <label for="photos" class="file-upload-btn">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-                                <circle cx="12" cy="13" r="4"></circle>
-                            </svg>
-                            Add Photos
-                        </label>
-                        <input type="file" id="photos" name="photos" multiple accept="image/*" style="display: none;">
-                        <span id="file-info" class="file-info">No photos selected</span>
+                    
+                    <div class="photo-item">
+                        <span class="photo-label">Front Right Corner</span>
+                        <img id="preview-front-right" class="photo-preview">
+                        <div class="file-upload">
+                            <button type="button" class="upload-btn">Take Photo</button>
+                            <input type="file" id="photo-front-right" name="photo-front-right" accept="image/*" capture="environment">
+                        </div>
+                    </div>
+                    
+                    <div class="photo-item">
+                        <span class="photo-label">Rear Left Corner</span>
+                        <img id="preview-rear-left" class="photo-preview">
+                        <div class="file-upload">
+                            <button type="button" class="upload-btn">Take Photo</button>
+                            <input type="file" id="photo-rear-left" name="photo-rear-left" accept="image/*" capture="environment">
+                        </div>
+                    </div>
+                    
+                    <div class="photo-item">
+                        <span class="photo-label">Rear Right Corner</span>
+                        <img id="preview-rear-right" class="photo-preview">
+                        <div class="file-upload">
+                            <button type="button" class="upload-btn">Take Photo</button>
+                            <input type="file" id="photo-rear-right" name="photo-rear-right" accept="image/*" capture="environment">
+                        </div>
+                    </div>
+                    
+                    <div class="photo-item full-width">
+                        <span class="photo-label">Dashboard (with engine running)</span>
+                        <img id="preview-dashboard" class="photo-preview">
+                        <div class="file-upload">
+                            <button type="button" class="upload-btn">Take Photo</button>
+                            <input type="file" id="photo-dashboard" name="photo-dashboard" accept="image/*" capture="environment">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -328,66 +319,236 @@
         </form>
     </div>
 
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://accounts.google.com/gsi/client"></script>
+    
     <script>
-        // File upload handling
-        document.getElementById('photos').addEventListener('change', function(e) {
-            const fileCount = e.target.files.length;
-            const fileInfo = document.getElementById('file-info');
-            
-            if (fileCount > 0) {
-                fileInfo.textContent = `${fileCount} photo${fileCount > 1 ? 's' : ''} selected`;
-            } else {
-                fileInfo.textContent = 'No photos selected';
-            }
+        // Handle file uploads and previews
+        const photoInputs = document.querySelectorAll('input[type="file"]');
+        
+        photoInputs.forEach(input => {
+            input.addEventListener('change', function(e) {
+                // Get the ID to find the corresponding preview element
+                const inputId = this.id;
+                const previewId = inputId.replace('photo-', 'preview-');
+                const previewElement = document.getElementById(previewId);
+                
+                // Check if files were selected
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        previewElement.src = e.target.result;
+                        previewElement.style.display = 'block';
+                    }
+                    
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
         });
-
+        
+        // Set up Google API
+        const CLIENT_ID = '849473901401-l1lc4rme7ltldv36plfpprcqtm3k5jgi.apps.googleusercontent.com';
+        const API_KEY = 'AIzaSyBGtLEQWiYqFZFANS4O7VI7p5aV2BGYX7Y';
+        const SCOPES = 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/spreadsheets';
+        const SPREADSHEET_ID = 'YOUR_SPREADSHEET_ID';
+        const DRIVE_FOLDER_ID = 'YOUR_DRIVE_FOLDER_ID';
+        
+        let tokenClient;
+        let gapiInited = false;
+        let gisInited = false;
+        
+        function gapiLoaded() {
+            gapi.load('client', initializeGapiClient);
+        }
+        
+        async function initializeGapiClient() {
+            await gapi.client.init({
+                apiKey: API_KEY,
+                discoveryDocs: [
+                    'https://sheets.googleapis.com/$discovery/rest?version=v4',
+                    'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'
+                ],
+            });
+            gapiInited = true;
+        }
+        
+        function gisLoaded() {
+            tokenClient = google.accounts.oauth2.initTokenClient({
+                client_id: CLIENT_ID,
+                scope: SCOPES,
+                callback: '', // defined later
+            });
+            gisInited = true;
+        }
+        
         // Form submission
-        document.getElementById('inspection-form').addEventListener('submit', function(e) {
+        document.getElementById('inspection-form').addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            // Check if Google APIs are initialized
+            if (!gapiInited || !gisInited) {
+                alert('Google APIs not initialized. Please try again in a moment.');
+                return;
+            }
+            
+            // Get form data
             const formData = {
                 vehicleId: document.getElementById('vehicleId').value,
                 driverName: document.getElementById('driverName').value,
-                make: document.getElementById('make').value,
-                model: document.getElementById('model').value,
-                year: document.getElementById('year').value,
                 mileage: document.getElementById('mileage').value,
                 oilChangeDue: document.getElementById('oilChangeDue').value,
-                vehiclePulling: document.getElementById('vehiclePulling').checked,
-                warningLights: document.getElementById('warningLights').checked,
-                windshieldWipers: document.getElementById('windshieldWipers').checked,
-                brakes: document.getElementById('brakes').checked,
-                tires: document.getElementById('tires').checked,
-                fluids: document.getElementById('fluids').checked,
-                other: document.getElementById('other').checked,
-                issueDetails: document.getElementById('issueDetails').value,
-                photos: document.getElementById('photos').files
+                notes: document.getElementById('notes').value,
+                timestamp: new Date().toISOString()
             };
             
-            console.log('Form submitted:', formData);
+            // Get photo files
+            const photoFiles = {
+                frontLeft: document.getElementById('photo-front-left').files[0],
+                frontRight: document.getElementById('photo-front-right').files[0],
+                rearLeft: document.getElementById('photo-rear-left').files[0],
+                rearRight: document.getElementById('photo-rear-right').files[0],
+                dashboard: document.getElementById('photo-dashboard').files[0]
+            };
             
-            // Update success message
-            document.getElementById('success-vehicle-id').textContent = `Vehicle ID: ${formData.vehicleId}`;
-            document.getElementById('success-vehicle-info').textContent = `${formData.year} ${formData.make} ${formData.model}`;
-            document.getElementById('success-mileage').textContent = `Current Mileage: ${formData.mileage}`;
+            // Check for authentication and request access if needed
+            tokenClient.callback = async (resp) => {
+                if (resp.error !== undefined) {
+                    throw resp;
+                }
+                
+                try {
+                    // Upload photos to Google Drive
+                    const photoUrls = await uploadPhotosToGoogleDrive(photoFiles, formData.vehicleId);
+                    
+                    // Add photo URLs to form data
+                    formData.photoUrls = photoUrls;
+                    
+                    // Save data to Google Sheets
+                    await saveToGoogleSheets(formData);
+                    
+                    // Show success message
+                    document.getElementById('success-vehicle-id').textContent = `Vehicle ID: ${formData.vehicleId}`;
+                    document.getElementById('success-driver-name').textContent = `Driver: ${formData.driverName}`;
+                    document.getElementById('success-mileage').textContent = `Current Mileage: ${formData.mileage}`;
+                    
+                    // Display notes if provided
+                    if (formData.notes && formData.notes.trim() !== '') {
+                        document.getElementById('success-notes').textContent = `Notes: ${formData.notes}`;
+                        document.getElementById('success-notes').style.display = 'block';
+                    } else {
+                        document.getElementById('success-notes').style.display = 'none';
+                    }
+                    
+                    document.getElementById('inspection-form').classList.add('hidden');
+                    document.getElementById('success-container').classList.remove('hidden');
+                    
+                } catch (err) {
+                    console.error('Error submitting form:', err);
+                    alert('An error occurred while submitting the form. Please try again.');
+                }
+            };
             
-            // Show success message, hide form
-            document.getElementById('inspection-form').classList.add('hidden');
-            document.getElementById('success-container').classList.remove('hidden');
+            // Request access token
+            tokenClient.requestAccessToken();
         });
-
+        
+        // Upload photos to Google Drive
+        async function uploadPhotosToGoogleDrive(photoFiles, vehicleId) {
+            const photoUrls = {};
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            
+            for (const [position, file] of Object.entries(photoFiles)) {
+                if (!file) continue;
+                
+                const filename = `${vehicleId}_${position}_${timestamp}`;
+                
+                // Create file metadata
+                const metadata = {
+                    name: filename,
+                    mimeType: file.type,
+                    parents: [DRIVE_FOLDER_ID]
+                };
+                
+                // Read file as ArrayBuffer
+                const content = await file.arrayBuffer();
+                
+                // Upload file to Drive
+                const response = await gapi.client.drive.files.create({
+                    resource: metadata,
+                    media: {
+                        mimeType: file.type,
+                        body: content
+                    },
+                    fields: 'id,webViewLink'
+                });
+                
+                photoUrls[position] = response.result.webViewLink;
+            }
+            
+            return photoUrls;
+        }
+        
+        // Save data to Google Sheets
+        async function saveToGoogleSheets(formData) {
+            // Prepare row data
+            const rowData = [
+                formData.timestamp,
+                formData.vehicleId,
+                formData.driverName,
+                formData.mileage,
+                formData.oilChangeDue,
+                formData.notes || '',
+                formData.photoUrls.frontLeft || '',
+                formData.photoUrls.frontRight || '',
+                formData.photoUrls.rearLeft || '',
+                formData.photoUrls.rearRight || '',
+                formData.photoUrls.dashboard || ''
+            ];
+            
+            // Append to Google Sheet
+            await gapi.client.sheets.spreadsheets.values.append({
+                spreadsheetId: SPREADSHEET_ID,
+                range: 'Sheet1!A:K', // Adjust range as needed
+                valueInputOption: 'RAW',
+                insertDataOption: 'INSERT_ROWS',
+                resource: {
+                    values: [rowData]
+                }
+            });
+        }
+        
         // Reset form
         document.getElementById('reset-btn').addEventListener('click', function() {
             document.getElementById('inspection-form').reset();
-            document.getElementById('file-info').textContent = 'No photos selected';
+            
+            // Reset photo previews
+            const previews = document.querySelectorAll('.photo-preview');
+            previews.forEach(preview => {
+                preview.style.display = 'none';
+                preview.src = '';
+            });
         });
-
+        
         // New submission button
         document.getElementById('new-submission-btn').addEventListener('click', function() {
             document.getElementById('inspection-form').reset();
-            document.getElementById('file-info').textContent = 'No photos selected';
+            
+            // Reset photo previews
+            const previews = document.querySelectorAll('.photo-preview');
+            previews.forEach(preview => {
+                preview.style.display = 'none';
+                preview.src = '';
+            });
+            
             document.getElementById('success-container').classList.add('hidden');
             document.getElementById('inspection-form').classList.remove('hidden');
+        });
+        
+        // Load Google APIs
+        window.addEventListener('load', function() {
+            gapiLoaded();
+            gisLoaded();
         });
     </script>
 </body>
